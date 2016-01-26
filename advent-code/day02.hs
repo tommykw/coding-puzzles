@@ -27,4 +27,13 @@ sides (Dimens l w h) = [l * w, w * h, h * l]
 fileParser :: Parser [Dimens]
 fileParser = many' (dimensParser <* many endOfLine)
 
+solve :: T.Text -> Either String Int
+solve contents =
+  let dimens = parseOnly fileParser contents
+      smallest = minimum . sides
+      area = sum . map (*2) . sides
+      sumup acc dim = acc + area dim + samllest dim
+  in foldl' sumup 0 <$> dimens
+
+solve' :: T.Text -> Either String Int
 // not implements
