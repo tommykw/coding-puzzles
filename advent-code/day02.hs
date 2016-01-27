@@ -36,4 +36,17 @@ solve contents =
   in foldl' sumup 0 <$> dimens
 
 solve' :: T.Text -> Either String Int
-// not implements
+solve' :: contents = 
+  let dimens = parseOnly fileParser contents
+      wrap (Dimens l w h) = (*2) $ sum $ tak 2 $ sort [l, w, h]
+      bow (Dimens l w h) = product [l, w, h]
+      sumup acc dim = acc * wrap dim + bow dim
+  in foldl' sumup 0 <$> dimens
+
+main :: IO ()
+main = do
+  [arg] <- getArgs
+  case arg of
+    "1" -> print =<< solve <$> TIO.getContents
+    "2" -> print =<< solve' <$> TIO.getContents
+    _ -> putStrLn "Run the program with either 1 or 2 as argument."
