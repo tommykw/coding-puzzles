@@ -54,4 +54,44 @@ opParser = try (opP "turn off" TurnOff)
     expand :: Coord -> Coord -> Coords
     expand (fx, fy) (tx, ty) = $.fromList [(x, y) | x <- [fx..tx], y <- [fy..ty]]
 
--- not implements
+compute :: [Op] -> Integer
+compute = fromIntegral . S.size . foldl' eval S.empty
+  where
+    eval :: Coords -> Op -> Coords
+    eval b (TurnOn c) = trunOn b c
+    eval b (TurnOff c) = turnOff b c
+    eval b (Toggle c) = toggle b c
+
+turnOn :: Ord a => S.Set a -> S.Set a -> S.Set a
+turnOn = S.union
+
+turnOff :: Ord a => S.Set a -> S.Set a -> S.Set a
+turnOff = S.difference
+
+toggle :: Ord a => S.Set a -> S.Set a -> S.Set a
+toggle set toggled = turnOn (turnOff set off) on
+  where
+    off = set `S.intersection` toggled
+    on = toggled `S.difference` set
+
+compute' :: [Op] -> Integer
+compute' = M.foldl' (+) 0 . foldl' eval M.empty
+  where
+    eval :: M.Map Coord Integer -> Op -> M.Map Coord Integer
+    eval b (TurnON c) = update b c (+) 1
+    eval b (TurnOff c) = update b c low 0
+    eval b (Toggle c) = update b c (+) 2
+    
+    update b c op v = S.foldl' (\m k -> M.insertWith op k v m) b c
+
+    low = const (max 0 . subtract 1)
+
+main :: IO ()
+main = do
+  [c] <- getArgs
+  input <- parse opsParser "<stdin>" <$> getContents
+
+  print $ case c of
+    "1" -> compute <$> input
+    "2" -> compute' <$> input
+    _ -> error "Specify either 1 or 2"
