@@ -7,6 +7,8 @@ main :: IO ()
 main = do
   putStrLn("bobby")
   putStrLn("world")
+  printNumbers
+  printConfig
 
 printNumbers = do
   putStrLn(show(3+4))
