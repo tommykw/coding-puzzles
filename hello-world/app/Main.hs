@@ -5,6 +5,8 @@ import System.IO (readFile)
 
 main :: IO ()
 main = do
+  name <- getLine
+  putStrLn("Hello, " ++ name)
   putStrLn("bobby")
   putStrLn("world")
   printNumbers
